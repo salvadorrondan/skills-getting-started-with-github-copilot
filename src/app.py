@@ -93,9 +93,10 @@ def get_activities():
 
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
-    # Validate student is not already signed up
+    # Validate student is not already signed up (case- and whitespace-insensitive)
+    email_normalized = email.strip().lower()
     for activity in activities.values():
-        if email in activity["participants"]:
+        if any(p.strip().lower() == email_normalized for p in activity["participants"]):
             raise HTTPException(status_code=400, detail="Student already signed up for an activity")
     """Sign up a student for an activity"""
     # Validate activity exists
